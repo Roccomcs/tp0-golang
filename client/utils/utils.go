@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 type Mensaje struct {
@@ -42,12 +43,49 @@ func LeerConsola() {
 	log.Print(text)
 }
 
+func LeerConsolaHastaVacio() {
+
+	fmt.Println("Ingrese los mensajes")
+
+	for {
+		reader := bufio.NewReader(os.Stdin)
+		text, _ := reader.ReadString('\n')
+		if text == string('\n') {
+			break
+		}
+		log.Print(text)
+	}
+}
+
+func LeerConsolaHastaVacioYLlevarAPaquete() Paquete {
+
+	fmt.Println("Ingrese los mensajes")
+
+	var lineas []string
+	for {
+		reader := bufio.NewReader(os.Stdin)
+		text, _ := reader.ReadString('\n')
+		if text == string('\n') {
+			break
+		}
+		text = strings.TrimSpace(text)
+		lineas = append(lineas, text)
+	}
+
+	paquete := Paquete{Valores: lineas}
+
+	return paquete
+}
+
 func GenerarYEnviarPaquete() {
-	paquete := Paquete{}
+	paquete := LeerConsolaHastaVacioYLlevarAPaquete()
 	// Leemos y cargamos el paquete
 
 	log.Printf("paqute a enviar: %+v", paquete)
 	// Enviamos el paqute
+
+	EnviarPaquete(globals.ClientConfig.Ip, globals.ClientConfig.Puerto, paquete)
+
 }
 
 func EnviarMensaje(ip string, puerto int, mensajeTxt string) {
